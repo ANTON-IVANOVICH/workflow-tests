@@ -1,0 +1,11 @@
+name: Workflow A (Ping)
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  ping:
+    uses: ANTON-IVANOVICH/workflow-tests/.github/workflows/pong.yml@main
+    with:
+      ping: "PONG"
