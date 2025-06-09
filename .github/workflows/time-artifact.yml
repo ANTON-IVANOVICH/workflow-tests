@@ -16,3 +16,16 @@ jobs:
           path: time.txt
           if-no-files-found: error # optional, default is warn
           retention-days: 1 # optional, maximum 90 days
+  print:
+    runs-on: ubuntu-latest
+    needs: create
+    steps:
+      - name: Download the time artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: time-artifact
+          path: ~/time.txt # /home/runner/time.txt
+      - name: Print the contents of the text file
+        run: cat time.txt
+      - name: Output the download path
+        run: echo ${{ steps.download-artifact.outputs.download-path }}
