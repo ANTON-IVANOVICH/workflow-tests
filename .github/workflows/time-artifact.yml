@@ -31,8 +31,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: time-artifact
-          path: ~/time.txt # /home/runner/time.txt
+          path: artifacts # /home/runner/artifacts
       - name: Print the contents of the text file
-        run: cat time.txt
-      - name: Output the download path
-        run: echo ${{ steps.download-artifact.outputs.download-path }}
+        run: cat artifacts/time.txt
