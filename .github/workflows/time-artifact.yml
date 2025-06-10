@@ -16,3 +16,21 @@ jobs:
           path: time.txt
           if-no-files-found: error # optional, default is warn
           retention-days: 1 # optional, maximum 90 days
+
+      - name: Upload on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: failure_artifact
+          path: failure.log
+  print:
+    runs-on: ubuntu-latest
+    needs: create
+    steps:
+      - name: Download the time artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: time-artifact
+          path: artifacts # /home/runner/artifacts
+      - name: Print the contents of the text file
+        run: cat artifacts/time.txt
