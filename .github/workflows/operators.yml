@@ -1,0 +1,19 @@
+name: Operators
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run expressions
+        id: step1
+        run: |
+          echo "Repository owner: ${{ github.repository_owner }}" # Property de-reference 
+          echo "myOutput=Hello, World" >> $GITHUB_OUTPUT
+          echo "Is it a push event? ${{ github.event_name == 'push' }}" # Equal 
+          echo "Is it not a push event? ${{ !(github.event_name == 'push') }}" # Not 
+          echo "Push by 'octocat'? ${{ (github.event_name == 'push') && (github.repository_owner == 'octocat') }}" # Logical
+      - name: Use output
+        run: |
+          echo "Previous step output: ${{ steps['step1'].outputs.myOutput }}" # index
