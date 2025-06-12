@@ -1,0 +1,11 @@
+name: Label Handler
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  example:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print labels
+        run: echo "${{ join(github.event.issue.labels.*.name, ', ') }}"
