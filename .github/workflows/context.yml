@@ -1,0 +1,35 @@
+name: Contexts Example with Same Matrix and Inputs
+
+on:
+  workflow_dispatch:
+    inputs:
+      custom_message:
+        description: "Enter a custom message"
+        required: true
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    outputs:
+      example_output: "This is an example output."
+    steps:
+      - name: Show runner OS
+        run: echo "The runner operating system is ${{ runner.os }}"
+
+      - name: Use strategy context
+        run: |
+          echo "The index of the current job in the matrix is ${{ strategy.job-index }}"
+          echo "The total number of jobs in the matrix is ${{ strategy.job-total }}"
+
+      - name: Use input context
+        run: echo "The custom message is ${{ github.event.inputs.custom_message }}"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use needs context
+        run: echo "Output from build job is ${{ needs.build.outputs.example_output }}"
