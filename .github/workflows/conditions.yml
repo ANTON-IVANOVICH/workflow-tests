@@ -1,0 +1,55 @@
+name: Conditional Workflow
+on:
+  push
+  # issue_comment:
+  #   types: [created, deleted]
+jobs:
+  number_generator:
+    runs-on: ubuntu-latest
+    steps:
+      - id: generator
+        run: echo "num=$RANDOM % 2"
+      - if: steps.generator.outputs.num == 0
+        run: echo zero
+      - if: steps.generator.outputs.num == 1
+        run: echo one
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - id: step1
+        run: "echo test=hello >> $GITHUB_OUTPUT"
+      - name: step2
+        if: contains(steps.step1.outputs.test, 'hello')
+        run: echo is executed
+      - name: step3
+        if: contains(steps.step1.outputs.test, 'bye')
+        run: echo not executed
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - id: generator
+        run: if [[ $((RANDOM % 2)) == 0 ]]; then exit 0; else exit 1; fi
+      - if: ${{ always() }}
+        run: echo ${{ steps.generator.outcome }}
+    needs: [number_generator, job1]
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: original
+        run: exit 0
+      - name: backup
+        if: ${{ failure() }}
+        run: echo backup
+  ignore:
+    runs-on: ubuntu-latest
+    steps:
+      - id: step3
+        continue-on-error: true
+        run: exit 1
+      - run: echo "I don't care!"
+  # pr_comments:
+  #   if: github.event.issue.pull_request
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - run: |
+  #         echo "You have a new comment on PR ${{ github.event.issue.number }}"
